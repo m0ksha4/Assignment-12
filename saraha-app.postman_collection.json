@@ -1,0 +1,179 @@
+{
+  "info": {
+    "_postman_id": "9521e66e-f27c-4f6f-90c5-3afdaf3ed26d",
+    "name": "saraha-app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51123833",
+    "_collection_link": "https://go.postman.co/collection/51123833-9521e66e-f27c-4f6f-90c5-3afdaf3ed26d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "signup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userName\": \"mohamed\",\r\n    \"email\": \"medo@gmail.com\",\r\n    \"password\": \"Medo$124l\",\r\n    \"phoneNumber\": \"01069829118\",\r\n    \"rePassword\":\"dsgsdgs\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/signup",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"email\": \"medo@.com\",\r\n    \"password\":\"102030\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refreshToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"email\": \"dfgs@.com\",\r\n    \"password\":\"ggvvdfgr\"\r\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/refresh",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "get-profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:3000/user/get-profile",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "user",
+                "get-profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
