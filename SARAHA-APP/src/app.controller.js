@@ -1,9 +1,11 @@
 import express from 'express'
 import {connection} from './DB/index.js'
 import {authRouter,userRouter} from "./modules/index.js"
+import { redisConnection } from './redis.connection.js'
 export const bootStrap=()=>{
 const app= express()
 connection()
+redisConnection()
 app.use(express.json())
 app.use("/auth",authRouter)
 app.use("/user",userRouter)

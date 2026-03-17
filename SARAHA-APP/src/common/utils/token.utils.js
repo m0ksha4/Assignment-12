@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken"
+import crypto from 'node:crypto'
 export const signToken=(payload,secretKey,expiresIn)=>{
+    payload.jti=crypto.randomBytes(10).toString("hex")
      return jwt.sign(payload,secretKey,{expiresIn})
     }
 
