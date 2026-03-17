@@ -138,6 +138,146 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "verify-account",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"email\":\"yousef@gmail.com\",\r\n\"otp\":\"893031\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/verify-account",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "verify-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "send-otp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"yousef@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/send-otp",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "send-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout-from-all-devices",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/logout-from-all-devices",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "logout-from-all-devices"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/logout",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -168,6 +308,82 @@
               "path": [
                 "user",
                 "get-profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upload-photo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "userName",
+                  "value": "omar2",
+                  "type": "text",
+                  "uuid": "3c7a1935-822b-4cda-9d92-7d0a4338d260"
+                },
+                {
+                  "key": "email",
+                  "value": "Omar2@gmail.com",
+                  "type": "text",
+                  "uuid": "9eac3c5a-ce49-46ce-9adf-ef27bc6e4313"
+                },
+                {
+                  "key": "password",
+                  "value": "Omar&45sf",
+                  "type": "text",
+                  "uuid": "0f0272d9-bc2e-4879-8d86-21cd6e2c70f2"
+                },
+                {
+                  "key": "role",
+                  "value": "0",
+                  "type": "text",
+                  "uuid": "3fd917b0-d1d6-4206-bc45-19bdb239e67d"
+                },
+                {
+                  "key": "gender",
+                  "value": "0",
+                  "type": "text",
+                  "uuid": "05c637c4-415b-4741-a963-1515d1ed5659"
+                },
+                {
+                  "key": "phoneNumber",
+                  "value": "01011927999",
+                  "type": "text",
+                  "uuid": "dfe1b90b-d783-4d22-bfda-afcc41359e8c"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "de6c0994-660c-419b-85db-b4a866079b79",
+                  "src": "/C:/Users/Mohamed Ebrahim/Downloads/images2pdf.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/user/upload-photo",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "user",
+                "upload-photo"
               ]
             }
           },
