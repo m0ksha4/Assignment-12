@@ -12,5 +12,5 @@ const generateMessage=(entity)=>{
 }
 export const SYS_MESSAGE={
     users:generateMessage("User"),
-    notes:generateMessage("Notes")
+    message:generateMessage("Message")
 }

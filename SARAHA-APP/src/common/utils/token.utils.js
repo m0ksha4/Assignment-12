@@ -5,8 +5,8 @@ export const signToken=(payload,secretKey,expiresIn)=>{
      return jwt.sign(payload,secretKey,{expiresIn})
     }
 
-export const verifyedToken=(token)=>{
-        return jwt.verify(token,process.env.JWT_SECRET)
+export const verifyedToken=(token,secretKey)=>{
+        return jwt.verify(token,secretKey)
     }
 export const generateToken = (payload)=>{
    const accessToken=signToken(

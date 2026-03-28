@@ -1,11 +1,14 @@
-import { BadRequestException, ConflictException, encryption, hash, SYS_MESSAGE, SYS_ROLE } from "../../common/index.js"
+import { OAuth2Client } from "google-auth-library"
+import { BadRequestException, comper, ConflictException, decryption, encryption, generateToken, hash, NotFoundException, PROVIDER_SYS, SYS_MESSAGE, SYS_ROLE, UnauthorizedException, verifyedToken } from "../../common/index.js"
 import { sendEmail } from "../../common/utils/email.utils.js"
 import { otpRepository } from "../../DB/models/OTP/otp.repository.js"
 import { tokenRepository } from "../../DB/models/token/token.repository.js"
 import { userRepsitory } from "../../DB/models/users/users.repository.js"
+import { redisClient } from "../../DB/redis.connection.js"
 //create user
 export const createUser=async(item)=>{
-await userRepsitory.create(item)
+const user= await userRepsitory.create(item)
+return user
 }
 //check if user exist
 export const checkUserExist=async(filter,projection={},opthions={})=>{
@@ -26,8 +29,28 @@ export const signup=async(body)=>{
          body.phoneNumber=encryption(body.phoneNumber)
   //create otp
         sendOtp(body)
-  //create user
-        await createUser(body)
+  //create user in cach
+    await redisClient.set(email,JSON.stringify(body),{EX:1*24*60*60})
+}
+export const loginService=async(body)=>{
+    const {email,phoneNumber}=body
+       const userExist=await checkUserExist({ 
+            $or:[
+                 { email: { $eq:email,$exists:true,$ne:null } },
+                 {phoneNumber : { $eq:phoneNumber,$exists:true,$ne:null } } 
+                ]})
+            if(!userExist){throw new NotFoundException(SYS_MESSAGE.users.notFound) }
+            const match=await comper(body.password,userExist.password)
+            if(!match){throw new UnauthorizedException('Invalid credentials') }
+            const {accessToken,refreshToken}=generateToken({
+                id:userExist._id,
+                email:userExist.email,
+                role:userExist.role
+            }
+            )
+                userExist.phoneNumber=decryption(userExist.phoneNumber)
+                await redisClient.set(`refreshToken:${userExist._id}`,refreshToken)
+                return {userExist,accessToken,refreshToken}
 }
 export const verifyedAccount=async (body)=>{
     const {email,otp}=body
@@ -44,8 +67,13 @@ export const verifyedAccount=async (body)=>{
           await otpDoc.save()
     throw new BadRequestException("invalid otp")
     }
-   
-    await userRepsitory.update({email},{isEmailVerified:true})
+   //get data from cach
+   let userFromCach= await redisClient.get(email)
+   //create user in DB
+   await userRepsitory.create(JSON.parse(userFromCach))
+   //delete user from cach
+   await redisClient.del(email)
+
     await otpRepository.deleteONE({_id:otpDoc._id})
     return true
 }
@@ -77,10 +105,58 @@ export const logoutFromAllDevices=async (user)=>{
     return true
 }
 export const logout=async(tokenPayload,user)=>{
- await tokenRepository.create({
-    token:tokenPayload.jti,
-    userId:user._id,
-    expiresAt:new Date(tokenPayload.exp*1000)
-    })
+//  await tokenRepository.create({
+//     token:tokenPayload.jti,
+//     userId:user._id,
+//     expiresAt:new Date(tokenPayload.exp*1000)
+//     })
+ await redisClient.set(`bl_${tokenPayload.jti}`,tokenPayload.jti,{
+    Ex:Math.floor(
+        (new Date(tokenPayload.exp*1000).getTime()-Date.now())/1000
+)
+ })
+}
+const googleVerfiyToken=async (idToken)=>{
+   const client = new OAuth2Client(process.env.ID_CLIENT)
+   const ticket =await client.verifyIdToken({idToken})
+   return ticket.getPayload()
+}
+export const loginWithGoogle=async(idToken)=>{
+const payload=await googleVerfiyToken(idToken)
+if(payload.email_verified==false){throw new BadRequestException("refused email from google")}
+ const user = await checkUserExist({email:payload.email})
  
+if(!user){
+    const newUser= await createUser({
+    email:payload.email,
+    userName:payload.name,
+    profilePic:payload.picture,
+    provider:PROVIDER_SYS.google})
+return generateToken({
+    _id:newUser._id,
+    role:newUser.role,
+    provider:newUser.provider
+ })
+    }
+
+return generateToken({
+    _id:user._id,
+    role:user.role,
+    provider:user.provider
+})
+}
+export const refreshTokenService=async(authorization)=>{
+     
+     const payload= verifyedToken(authorization,process.env.SECRET_REFRESH)
+     const cashedRefreshToken=await redisClient.get(`refreshToken:${payload.id}`)
+     if(cashedRefreshToken!=authorization){
+        await logoutFromAllDevices({_id:payload.id})
+        await redisClient.del(`refreshToken:${payload.id}`)
+        throw new UnauthorizedException(`you are not authorized `)
+     }
+     delete payload.iat
+     delete payload.exp
+    const {accessToken,refreshToken}= generateToken(payload)
+    await redisClient.set(`refreshToken:${payload.id}`,refreshToken)
+    return {accessToken,refreshToken}
 }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkUserExist, createUser, logout, logoutFromAllDevices, sendOtp, signup, verifyedAccount } from "./auth.service.js";
+import { checkUserExist, createUser, loginService, loginWithGoogle, logout, logoutFromAllDevices, refreshTokenService, sendOtp, signup, verifyedAccount } from "./auth.service.js";
 import { BadRequestException, comper, ConflictException, decryption, encryption, 
      generateToken, hash, NotFoundException,SYS_MESSAGE, SYS_ROLE, UnauthorizedException,
      verifyedToken} from "../../common/index.js";
@@ -15,32 +15,14 @@ const router= Router()
     res.status(200).json({message:SYS_MESSAGE.users.created})
  })
  router.post("/login",isValid(loginSchema),async(req,res,next)=>{
-     const {email,phoneNumber}=req.body
-   const userExist=await checkUserExist({ 
-        $or:[
-             { email: { $eq:email,$exists:true,$ne:null } },
-             {phoneNumber : { $eq:phoneNumber,$exists:true,$ne:null } } 
-            ]})
-        if(!userExist){throw new NotFoundException(SYS_MESSAGE.users.notFound) }
-        const match=await comper(req.body.password,userExist.password)
-        if(!match){throw new UnauthorizedException('Invalid credentials') }
-        const {accessToken,refreshToken}=generateToken({
-            id:userExist._id,
-            email:userExist.email,
-            role:userExist.role
-        }
-        )
-            userExist.phoneNumber=decryption(userExist.phoneNumber)
+     const{userExist,accessToken,refreshToken}=await loginService(req.body)
         res.status(200).json({data:userExist,accessToken,refreshToken})
  })
 
 router.get("/refresh",async(req,res,next)=>{
   const{authorization}=req.headers
-  if(!authorization){throw new BadRequestException("Token is required")}
- const payload= verifyedToken(authorization)
- delete payload.iat
- delete payload.exp
- const {accessToken,refreshToken}=generateToken(payload)
+ if(!authorization){throw new BadRequestException("Token is required")}
+ const {accessToken,refreshToken}=await refreshTokenService(authorization)
 return res.status(200).json({accessToken,refreshToken})
 })
 router.patch("/verify-account",async(req,res,next)=>{
@@ -64,4 +46,12 @@ res.status(200).json({
     message:"logout  successfully"
 })
 })
+router.post("/signup/gmail",async(req,res,next)=>{
+  const{idToken}=req.body
+  const {accessToken,refreshToken}=await loginWithGoogle(idToken)
+  
+   
+    res.status(200).json({success:true,
+        data:accessToken,refreshToken})
+ })
 export default router

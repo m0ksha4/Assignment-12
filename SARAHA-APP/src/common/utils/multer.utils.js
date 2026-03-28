@@ -10,10 +10,15 @@ export const fileUpload=(allowedType=["image/png","image/jpeg","image/gif"])=>{
         cb(null,true)
     },
     storage:diskStorage({
+        
         destination:(req,file,cb)=>{
-            if(!fs.existsSync(`uploads/${req.user._id}`)){
-            fs.mkdirSync(`uploads/${req.user._id}`)}
-            cb(null,`uploads/${req.user._id}`)
+            const folder=req.user?
+        `uploads/${req.user._id}`:
+        `uploads/${req.params.reciverId}/messages`
+
+            if(!fs.existsSync(folder)){
+            fs.mkdirSync(folder,{recursive:true})}
+            cb(null,folder)
         },
         filename:(req,file,cb)=>{ 
             cb(null,Date.now()+Math.random()+"__"+file.originalname)

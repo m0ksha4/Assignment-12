@@ -1,14 +1,31 @@
 import express from 'express'
 import {connection} from './DB/index.js'
-import {authRouter,userRouter} from "./modules/index.js"
-import { redisConnection } from './redis.connection.js'
+import {authRouter,userRouter,messageRouter} from "./modules/index.js"
+import { redisConnection } from './DB/redis.connection.js'
+import cors from 'cors'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 export const bootStrap=()=>{
 const app= express()
 connection()
 redisConnection()
+app.use(cors('*'))
+app.use(helmet())
+const limit=rateLimit({
+    windowMs:60*1000,
+    limit:3,
+    handler:(req,res,next)=>{
+        throw new Error("too many requests ",{cause:429})
+    },
+    keyGenerator:(req,res,next)=>{
+        return `${req.ip}:${req.path}`
+    }
+})
+app.use(limit)
 app.use(express.json())
 app.use("/auth",authRouter)
 app.use("/user",userRouter)
+app.use("/message",messageRouter)
 
 
 
