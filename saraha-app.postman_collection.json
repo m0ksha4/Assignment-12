@@ -1,0 +1,572 @@
+{
+  "info": {
+    "_postman_id": "9521e66e-f27c-4f6f-90c5-3afdaf3ed26d",
+    "name": "saraha-app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51123833",
+    "_collection_link": "https://go.postman.co/collection/51123833-9521e66e-f27c-4f6f-90c5-3afdaf3ed26d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "signup",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userName\": \"mohamed\",\r\n    \"email\": \"medo@gmail.com\",\r\n    \"password\": \"Medo$124l\",\r\n    \"phoneNumber\": \"01069829118\",\r\n    \"rePassword\":\"dsgsdgs\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/signup",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"email\": \"medo@.com\",\r\n    \"password\":\"102030\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refreshToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Yjk2MjY0MGNhMWY0NzM0ZjE1MDQwNSIsImVtYWlsIjoieW91c2VmQGdtYWlsLmNvbSIsInJvbGUiOjAsImp0aSI6ImUxYWY4NGQzNGNmOWRlYjAxNTNhIiwiaWF0IjoxNzc0NzM2NDIyLCJleHAiOjE4MDYyOTQwMjJ9.JNzKfoXuNCniZMWa8X26Ir56xYmGODnLsfF_Y-lWbwU",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/refresh",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-account",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\"email\":\"yousef@gmail.com\",\r\n\"otp\":\"416073\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/verify-account",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "verify-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "send-otp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"yousef@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/send-otp",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "send-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout-from-all-devices",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/logout-from-all-devices",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "logout-from-all-devices"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/auth/logout",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "get-profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:3000/user/get-profile",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "user",
+                "get-profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upload-photo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "userName",
+                  "value": "omar2",
+                  "type": "text",
+                  "uuid": "3c7a1935-822b-4cda-9d92-7d0a4338d260"
+                },
+                {
+                  "key": "email",
+                  "value": "Omar2@gmail.com",
+                  "type": "text",
+                  "uuid": "9eac3c5a-ce49-46ce-9adf-ef27bc6e4313"
+                },
+                {
+                  "key": "password",
+                  "value": "Omar&45sf",
+                  "type": "text",
+                  "uuid": "0f0272d9-bc2e-4879-8d86-21cd6e2c70f2"
+                },
+                {
+                  "key": "role",
+                  "value": "0",
+                  "type": "text",
+                  "uuid": "3fd917b0-d1d6-4206-bc45-19bdb239e67d"
+                },
+                {
+                  "key": "gender",
+                  "value": "0",
+                  "type": "text",
+                  "uuid": "05c637c4-415b-4741-a963-1515d1ed5659"
+                },
+                {
+                  "key": "phoneNumber",
+                  "value": "01011927999",
+                  "type": "text",
+                  "uuid": "dfe1b90b-d783-4d22-bfda-afcc41359e8c"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "de6c0994-660c-419b-85db-b4a866079b79",
+                  "src": "/C:/Users/Mohamed Ebrahim/Downloads/images2pdf.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/user/upload-photo",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "user",
+                "upload-photo"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "item": [
+        {
+          "name": "send_message_anonymous",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"content\":\"hi moksha\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/message/69b962640ca1f4734f150405/anonymous",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "message",
+                "69b962640ca1f4734f150405",
+                "anonymous"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "send_message-public",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "content",
+                  "value": "hi mohamed i'm yousef",
+                  "type": "text",
+                  "uuid": "0beba29d-e717-4188-ba0c-18bc82de914d"
+                },
+                {
+                  "key": "attachments",
+                  "type": "file",
+                  "uuid": "1af37c38-460c-4d58-b69e-f5fc9926edfa",
+                  "src": "/C:/Users/Mohamed Ebrahim/OneDrive/الصور/images.jpg"
+                },
+                {
+                  "key": "sender",
+                  "value": "{{accessToken}}",
+                  "type": "text",
+                  "uuid": "a2f5b2a0-b163-4696-a8e3-aae796516647"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/message/69c2d6a8a7425e632f1d88c6/public",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "message",
+                "69c2d6a8a7425e632f1d88c6",
+                "public"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_specific_message",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"content\":\"hi moksha\"\r\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/message/69c6e248f2bd60d37c88bfa2/get-message",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "message",
+                "69c6e248f2bd60d37c88bfa2",
+                "get-message"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all messages",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"content\":\"hi moksha\"\r\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:3000/message/all-message?",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "3000",
+              "path": [
+                "message",
+                "all-message"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
