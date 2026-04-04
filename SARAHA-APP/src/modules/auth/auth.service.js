@@ -5,6 +5,7 @@ import { otpRepository } from "../../DB/models/OTP/otp.repository.js"
 import { tokenRepository } from "../../DB/models/token/token.repository.js"
 import { userRepsitory } from "../../DB/models/users/users.repository.js"
 import { redisClient } from "../../DB/redis.connection.js"
+import { v4 as uuidv4 } from 'uuid'
 //create user
 export const createUser=async(item)=>{
 const user= await userRepsitory.create(item)
@@ -49,8 +50,9 @@ export const loginService=async(body)=>{
             }
             )
                 userExist.phoneNumber=decryption(userExist.phoneNumber)
-                await redisClient.set(`refreshToken:${userExist._id}`,refreshToken)
-                return {userExist,accessToken,refreshToken}
+                const sessionId = uuidv4()
+                await redisClient.set(`refreshToken:${userExist._id}:${sessionId}`,refreshToken )
+                return {userExist,accessToken,refreshToken,sessionId}
 }
 export const verifyedAccount=async (body)=>{
     const {email,otp}=body
@@ -104,17 +106,14 @@ export const logoutFromAllDevices=async (user)=>{
     )
     return true
 }
-export const logout=async(tokenPayload,user)=>{
-//  await tokenRepository.create({
-//     token:tokenPayload.jti,
-//     userId:user._id,
-//     expiresAt:new Date(tokenPayload.exp*1000)
-//     })
- await redisClient.set(`bl_${tokenPayload.jti}`,tokenPayload.jti,{
-    Ex:Math.floor(
-        (new Date(tokenPayload.exp*1000).getTime()-Date.now())/1000
-)
- })
+export const logout = async (tokenPayload, user, sessionId) => {
+
+    await redisClient.set(`bl_${tokenPayload.jti}`, tokenPayload.jti, {
+        EX: Math.floor(
+            (new Date(tokenPayload.exp * 1000).getTime() - Date.now()) / 1000
+        )
+    })
+    await redisClient.del(`refreshToken:${user._id}:${sessionId}`)
 }
 const googleVerfiyToken=async (idToken)=>{
    const client = new OAuth2Client(process.env.ID_CLIENT)
@@ -145,18 +144,23 @@ return generateToken({
     provider:user.provider
 })
 }
-export const refreshTokenService=async(authorization)=>{
+export const refreshTokenService=async(authorization,sessionId)=>{
      
      const payload= verifyedToken(authorization,process.env.SECRET_REFRESH)
-     const cashedRefreshToken=await redisClient.get(`refreshToken:${payload.id}`)
+     const cashedRefreshToken=await redisClient.get(`refreshToken:${payload.id}:${sessionId}`)
+     
+     if (!cashedRefreshToken) {
+        throw new UnauthorizedException('session expired or logged out')
+    }
+
      if(cashedRefreshToken!=authorization){
-        await logoutFromAllDevices({_id:payload.id})
-        await redisClient.del(`refreshToken:${payload.id}`)
+        
+        await redisClient.del(`refreshToken:${payload.id}:${sessionId}`)
         throw new UnauthorizedException(`you are not authorized `)
      }
      delete payload.iat
      delete payload.exp
     const {accessToken,refreshToken}= generateToken(payload)
-    await redisClient.set(`refreshToken:${payload.id}`,refreshToken)
+    await redisClient.set(`refreshToken:${payload.id}:${sessionId}`,refreshToken)
     return {accessToken,refreshToken}
 }

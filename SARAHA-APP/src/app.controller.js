@@ -4,21 +4,22 @@ import {authRouter,userRouter,messageRouter} from "./modules/index.js"
 import { redisConnection } from './DB/redis.connection.js'
 import cors from 'cors'
 import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
+import rateLimit,{ipKeyGenerator} from 'express-rate-limit'
 export const bootStrap=()=>{
 const app= express()
 connection()
 redisConnection()
 app.use(cors('*'))
 app.use(helmet())
-const limit=rateLimit({
-    windowMs:60*1000,
-    limit:3,
-    handler:(req,res,next)=>{
-        throw new Error("too many requests ",{cause:429})
+const limit = rateLimit({
+    windowMs: 60 * 1000, 
+    max: 3,
+    handler: (req, res, next) => {
+        throw new Error("too many requests", { cause: 429 })
     },
-    keyGenerator:(req,res,next)=>{
-        return `${req.ip}:${req.path}`
+    keyGenerator: (req, res, next) => {
+        const ip = ipKeyGenerator(req) 
+        return `${ip}:${req.path}` 
     }
 })
 app.use(limit)
